@@ -251,6 +251,21 @@ extends AbstractURIConvertingScopeDefinitionFactory {
   }
   
   /**
+   * @param uriLocation uri with absolute path
+   * @return platform resource uri
+   */
+  protected URI tryToPlatformUri(java.net.URI uriLocation) {
+    IFile[] platformFiles = ResourcesPlugin.getWorkspace().getRoot()
+        .findFilesForLocationURI(uriLocation);
+    if (platformFiles.length > 0 && platformFiles[0].isAccessible()) {
+      IFile iFile = platformFiles[0];
+      return URI.createPlatformResourceURI(iFile.getFullPath().toString(),
+          true);
+    }
+    return null;
+  }
+  
+  /**
    * Return whether this scope definition factory is applicable to the given revision
    * extracted from the given typed element
    * @param revision_p a non-null revision

@@ -14,6 +14,7 @@
 package org.eclipse.emf.diffmerge.connector.git.ext;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
@@ -111,7 +112,13 @@ public class GitIndexRevisionScopeDefinitionFactory extends AbstractRevisionScop
       try {
         conflicting = GitHelper.INSTANCE.isConflicting(revision_p);
         if (conflicting)
-          result = URI.createPlatformResourceURI(revision_p.getURI().toString(), false);
+        {  
+          String repoPath = ((IndexFileRevision) revision_p).getRepository()
+              .getDirectory().getParentFile().getPath();
+          java.nio.file.Path capellaProjectPath = Paths.get(repoPath,
+              revision_p.getURI().toString());
+          result = tryToPlatformUri(capellaProjectPath.toUri());
+        }
         else
           result = URI.createURI(
               GitHelper.INSTANCE.getSchemeIndex() + GitHelper.INSTANCE.getSchemeSeparator() +
